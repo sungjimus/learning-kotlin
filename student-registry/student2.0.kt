@@ -1,9 +1,32 @@
-data class Student(
+open class Student(
 
     var name:String,
     var roll:Int,
     var sem:Int
+    
+    
 )
+
+class Regular(
+
+    name:String,
+    roll:Int,
+    sem:Int
+):Student(name,roll,sem)
+
+class Research(
+
+    name:String,
+    roll:Int,
+    sem:Int,
+    var topic:String
+):Student(name,roll,sem)
+
+
+    
+
+        
+
 
 fun main(){
 
@@ -23,7 +46,18 @@ fun main(){
         ans=readln().toInt()
 
         if(ans==1){
-            println(addstu(stulist))
+            println("What type of student are you?\n 1.Regular student.\n 2.Research student.")
+            var stutype=readln().toInt()
+
+            when(stutype){
+
+                    1 -> println(addstu(stulist,stutype))
+
+                    2 -> println(addstu(stulist,stutype))
+
+            }
+            
+            
         }
 
         else if(ans==2){
@@ -47,7 +81,7 @@ fun main(){
 
 }
 
-fun addstu(stulist:MutableList<Student>):String{
+fun addstu(stulist:MutableList<Student>,stutype:Int):String{
 
     var user:Char='y'
 
@@ -55,7 +89,7 @@ fun addstu(stulist:MutableList<Student>):String{
     var roll:Int
     var sem:Int
 
-    while(user=='y'){
+    while(user=='y' && stutype==1){
 
         print("Name of the student:")
         name=readln()
@@ -69,30 +103,81 @@ fun addstu(stulist:MutableList<Student>):String{
             print("Roll number:")
             roll= readln().toInt()
 
+            if(roll<0){
+                exists=true
+                println("The roll number is invalid.")
+            }
+
             for(i in stulist){
                 if(i.roll==roll){
                     exists=true
-                    println("The entered roll number already exists.")
+                    println("The roll number already exists.")
                 }
-            }
+            }   
 
         }while(exists)
 
+    
+        
+
         print("")
 
-        print("Semester:")
+        println("Semester:")
         sem=readln().toInt()
 
+
+        stulist.add(Regular(name,roll,sem))
+
+        print("Do u wish to continue y or n: ")
+        user=readln().first()
+
+    }
+    while(user=='y' && stutype==2){
+
+        print("Name of the student:")
+        name=readln()
+
         print("")
 
-        stulist.add(Student(name,roll,sem))
+        var exists:Boolean
 
-        print("Do u wish to continue y or n")
+        do{
+            exists=false
+            print("Roll number:")
+            roll= readln().toInt()
+
+            if(roll<0){
+                exists=true
+                println("The roll number is invalid.")
+            }
+
+            for(i in stulist){
+                if(i.roll==roll){
+                    exists=true
+                    println("The roll number already exists.")
+                }
+            }   
+
+        }while(exists)
+
+    
+    
+        print("")
+
+        println("Semester:")
+        sem=readln().toInt()
+
+        println("Whats your research field?")
+        var research:String=readln()
+
+        stulist.add(Research(name,roll,sem,research))
+
+        print("Do u wish to continue y or n: ")
         user=readln().first()
 
     }
     return("Added successfully!")
-
+    
 }
 
 fun search(stulist:MutableList<Student>):String{
@@ -102,8 +187,12 @@ fun search(stulist:MutableList<Student>):String{
 
     for (i in stulist){
 
-        if(i.roll==find){
+        if(i.roll==find && i is Regular){
             return("Name:${i.name}\nRoll:${i.roll}\nSemester:${i.sem}")
+            break
+        }
+        else if(i.roll==find && i is Research){
+            return("Name:${i.name}\nRoll:${i.roll}\nSemester:${i.sem}\nTopic:${i.topic}")
             break
         }
         
