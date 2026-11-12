@@ -2,31 +2,26 @@ open class Student(
 
     var name:String,
     var roll:Int,
-    var sem:Int
-    
-    
+    var sem:Int,
+    var intro:String
 )
 
 class Regular(
 
     name:String,
     roll:Int,
-    sem:Int
-):Student(name,roll,sem)
+    sem:Int,
+    intro:String
+):Student(name,roll,sem,intro)
 
 class Research(
 
     name:String,
     roll:Int,
     sem:Int,
+    intro:String,
     var topic:String
-):Student(name,roll,sem)
-
-
-    
-
-        
-
+):Student(name,roll,sem,intro)
 
 fun main(){
 
@@ -38,43 +33,34 @@ fun main(){
 
         println("1.Add student info.")
         println("2.Search for student.")
-        println("3.Update student detail.")
+        println("3.Update student detail.")        
         println("4.Delete Student data.")
         println("5.Exit.")
         println("enter your choice:")
 
         ans=readln().toInt()
 
-        if(ans==1){
-            println("What type of student are you?\n 1.Regular student.\n 2.Research student.")
-            var stutype=readln().toInt()
+        when(ans){
 
-            when(stutype){
+            1 ->{
+                println("What type of student are you?\n 1.Regular student.\n 2.Research student.")
+                var stutype=readln().toInt()
+
+                when(stutype){
 
                     1 -> println(addstu(stulist,stutype))
 
                     2 -> println(addstu(stulist,stutype))
 
+                }
             }
-            
-            
-        }
+            2 ->println(search(stulist,))
 
-        else if(ans==2){
-            println(search(stulist))
-        }
+            3 ->update(stulist)
 
-        else if(ans==3){
-            update(stulist)
-        }
+            4 ->println(del(stulist))
 
-        else if(ans==4){
-
-            del(stulist)
-        }
-
-        else if(ans==5){
-            choice=false
+            5 ->choice=false
         }
     }
     print("Exited succesfully")
@@ -86,47 +72,89 @@ fun addstu(stulist:MutableList<Student>,stutype:Int):String{
     var user:Char='y'
 
     var name:String
-    var roll:Int
-    var sem:Int
+    var roll:Int=0
+    var sem:Int=0
+    var exists:Boolean
 
     while(user=='y' && stutype==1){
 
-        print("Name of the student:")
-        name=readln()
-
-        print("")
-
-        var exists:Boolean
-
         do{
+            print("Name:")
+            name=readln()
+
             exists=false
-            print("Roll number:")
-            roll= readln().toInt()
-
-            if(roll<0){
+            if(name.any{it.isDigit()}){
                 exists=true
-                println("The roll number is invalid.")
+                println("Only characters should be typed.")
             }
-
-            for(i in stulist){
-                if(i.roll==roll){
-                    exists=true
-                    println("The roll number already exists.")
-                }
-            }   
+            else if(name.isBlank()){
+                exists=true
+                println("Name cannot be blank.")
+            }
 
         }while(exists)
 
-    
+        print("")
+
         
+
+        do{
+            try{
+
+                exists=false
+                print("Roll number:")
+                roll= readln().toInt()
+
+                if(roll<=0){
+                    exists=true
+                    println("The roll number is invalid.")
+                }
+
+                for(i in stulist){
+                    if(i.roll==roll){
+                        exists=true
+                        println("The roll number already exists.")
+                    }
+                }
+
+            }   
+
+            catch(e:NumberFormatException){
+                exists=true
+                println("Enter a valid roll number.")
+            }
+
+        }while(exists)
+
+        do{
+            try{
+
+                exists=false
+                print("Semester:")
+                sem= readln().toInt()
+
+                if(sem<0 || sem>8){
+                    exists=true
+                    println("The semester is invalid.")
+                }
+
+            }   
+
+            catch(e:NumberFormatException){
+                exists=true
+                println("Enter a valid semester.")
+            }
+
+        }while(exists)
 
         print("")
 
-        println("Semester:")
-        sem=readln().toInt()
+        println("")
 
-
-        stulist.add(Regular(name,roll,sem))
+        println("Write an introduction for yourself.")
+        var intro:String=readln()
+        
+        stulist.add(Regular(name,roll,sem,intro))
 
         print("Do u wish to continue y or n: ")
         user=readln().first()
@@ -142,21 +170,30 @@ fun addstu(stulist:MutableList<Student>,stutype:Int):String{
         var exists:Boolean
 
         do{
-            exists=false
-            print("Roll number:")
-            roll= readln().toInt()
+            try{
 
-            if(roll<0){
-                exists=true
-                println("The roll number is invalid.")
-            }
+                exists=false
+                print("Roll number:")
+                roll= readln().toInt()
 
-            for(i in stulist){
-                if(i.roll==roll){
+                if(roll<0){
                     exists=true
-                    println("The roll number already exists.")
+                    println("The roll number is invalid.")
                 }
+
+                for(i in stulist){
+                    if(i.roll==roll){
+                        exists=true
+                        println("The roll number already exists.")
+                    }
+                }
+
             }   
+
+            catch(e:NumberFormatException){
+                exists=true
+                println("Enter a valid roll number.")
+            }
 
         }while(exists)
 
@@ -164,13 +201,34 @@ fun addstu(stulist:MutableList<Student>,stutype:Int):String{
     
         print("")
 
-        println("Semester:")
-        sem=readln().toInt()
+       do{
+            try{
+
+                exists=false
+                print("Semester:")
+                sem= readln().toInt()
+
+                if(sem<0 && sem>8){
+                    exists=true
+                    println("The semester is invalid.")
+                }
+
+            }   
+
+            catch(e:NumberFormatException){
+                exists=true
+                println("Enter a valid semester.")
+            }
+
+        }while(exists)
+
+        println("Write an introduction for yourself.")
+        var intro:String=readln()
 
         println("Whats your research field?")
         var research:String=readln()
 
-        stulist.add(Research(name,roll,sem,research))
+        stulist.add(Research(name,roll,sem,intro,research))
 
         print("Do u wish to continue y or n: ")
         user=readln().first()
@@ -188,11 +246,11 @@ fun search(stulist:MutableList<Student>):String{
     for (i in stulist){
 
         if(i.roll==find && i is Regular){
-            return("Name:${i.name}\nRoll:${i.roll}\nSemester:${i.sem}")
+            return("Name:${i.name}\nRoll:${i.roll}\nSemester:${i.sem}\nIntroduction:${i.intro}")
             break
         }
         else if(i.roll==find && i is Research){
-            return("Name:${i.name}\nRoll:${i.roll}\nSemester:${i.sem}\nTopic:${i.topic}")
+            return("Name:${i.name}\nRoll:${i.roll}\nSemester:${i.sem}\nTopic:${i.topic}\nIntro:${i.intro}")
             break
         }
         
@@ -233,6 +291,7 @@ fun update(stulist:MutableList<Student>){
                     i.sem=new_sem
                     println("succesfully changed.")
                 }
+                
             }
             break
         }
@@ -240,7 +299,7 @@ fun update(stulist:MutableList<Student>){
     println("no result.")
 }
 
-fun del(stulist:MutableList<Student>){
+fun del(stulist:MutableList<Student>):String{
 
     print("Roll number of the student:")
     var delete:Int=readln().toInt()
@@ -249,10 +308,10 @@ fun del(stulist:MutableList<Student>){
 
         if(i.roll==delete){
             stulist.remove(i)
-            println("Deleted student data successfully")
+            return("Deleted student data successfully")
             break
         }
     }
-    println("student not found")
+    return("student not found")
 
 }
